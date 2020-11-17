@@ -17,7 +17,7 @@ package de.tuberlin.dima.rddsampling
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.storage.StorageLevel
-import org.apache.spark.{OneToOneDependency, Partition, TaskContext}
+import org.apache.spark.{NondeterministicRDD, OneToOneDependency, Partition, TaskContext}
 
 import scala.reflect.ClassTag
 import scala.util.Random
@@ -26,7 +26,7 @@ import scala.util.Random
  *
  * An RDD that stores data partitions in a single elements, allowing for more efficient sampling.
  *
- * @param partitionsRDD The underlying representation of the de.tuberlin.dima.rddsampling.SampleableRDD as an RDD of partitions.
+ * @param partitionsRDD The underlying representation of the SampleableRDD as an RDD of partitions.
  * @tparam A the type of the original RDD elements
  */
 class SampleableRDD[A: ClassTag](private val partitionsRDD: RDD[SampleableRDDPartition[A]])
@@ -102,11 +102,12 @@ class SampleableRDD[A: ClassTag](private val partitionsRDD: RDD[SampleableRDDPar
 object SampleableRDD {
 
   /**
-   * Constructs a de.tuberlin.dima.rddsampling.SampleableRDD from an RDD by mapping each partition to a [[SampleableRDDPartition]].
+   * Constructs a SampleableRDD from an RDD by mapping each partition to a [[SampleableRDDPartition]].
    */
   def apply[A: ClassTag](elems: RDD[A]): SampleableRDD[A] = {
-    val partitions = elems.mapPartitions(iter => Iterator(SampleableRDDPartition(iter)),
-      preservesPartitioning = false)
+    // It's not deterministic because of rearranging the array
+    val partitions = new NondeterministicRDD(elems.mapPartitions(iter => Iterator(SampleableRDDPartition(iter)),
+      preservesPartitioning = false))
     new SampleableRDD[A](partitions)
   }
 
