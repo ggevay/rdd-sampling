@@ -78,17 +78,19 @@ class SampleableRDD[A: ClassTag](private val partitionsRDD: RDD[SampleableRDDPar
        * Final sample are the n rightmost elements.
        */
       partitionsRDD.flatMap({ part =>
-        val rnd = new Random(seed)
-        val n = (part.size * fraction).toInt
+        part.synchronized {
+          val rnd = new Random(seed)
+          val n = (part.size * fraction).toInt
 
-        for (i <- 1 to n - 1) {
-          val rndIdx = rnd.nextInt(part.size - i)
-          val buf = part.data(part.size - i)
-          part.data(part.size - i) = part.data(rndIdx)
-          part.data(rndIdx) = buf
+          for (i <- 1 until n) {
+            val rndIdx = rnd.nextInt(part.size - i)
+            val buf = part.data(part.size - i)
+            part.data(part.size - i) = part.data(rndIdx)
+            part.data(rndIdx) = buf
+          }
+
+          part.data.takeRight(n)
         }
-
-        part.data.takeRight(n)
       })
     }
   }
