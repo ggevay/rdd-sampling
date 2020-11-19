@@ -57,7 +57,6 @@ class SampleableRDD[A: ClassTag](private val partitionsRDD: RDD[SampleableRDDPar
    *                        with replacement: expected number of times each element is chosen; fraction must be greater
    *                        than or equal to 0
    * @param seed            seed for the random number generator
-   * @note As opposed to the original RDD.sample(), this implementation guarantees the correct number of elements to be returned.
    */
   override def sample(withReplacement: Boolean, fraction: Double, seed: Long): RDD[A] = {
     require(fraction >= 0,
