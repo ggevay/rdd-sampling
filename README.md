@@ -15,7 +15,7 @@ val sampleableRDD = SampleableRDD(rdd).cache()
 
 while (...) {
   // Efficiently sample (run time proportional to the sample size):
-  val samp = sampleableRDD.sample(withReplacement = true, fraction = 0.1, seed = 0x1337)
+  val samp = sampleableRDD.sample(withReplacement = true, fraction = 0.01, seed = 0x1337)
   // ...
 }
 ```
