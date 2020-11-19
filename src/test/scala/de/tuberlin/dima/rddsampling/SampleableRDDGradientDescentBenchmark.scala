@@ -34,16 +34,16 @@ object SampleableRDDGradientDescentBenchmark extends BenchmarkBase {
    */
   override def runBenchmarkSuite(mainArgs: Array[String]): Unit = {
 
-    runBenchmark("Gradient descent sample size on RDD and de.tuberlin.dima.rddsampling.SampleableRDD performance") {
+    runBenchmark("Gradient descent sample size on RDD and SampleableRDD performance") {
       benchmarkGradientDescentSize(numValues = 1000000)
     }
 
-    runBenchmark("Gradient descent number of iterations on RDD and de.tuberlin.dima.rddsampling.SampleableRDD performance") {
+    runBenchmark("Gradient descent number of iterations on RDD and SampleableRDD performance") {
       benchmarkGradientDescentIter(numValues = 1000000)
     }
   }
 
-  private def benchmarkGradientDescentSize(numValues: Int) = {
+  private def benchmarkGradientDescentSize(numValues: Int): Unit = {
     val benchmark = new Benchmark("Benchmark Setup", numValues, output = output)
 
     val batchSizes = Seq(0.1, 0.09, 0.08, 0.07, 0.06, 0.05, 0.04, 0.03, 0.02, 0.01)
@@ -61,7 +61,7 @@ object SampleableRDDGradientDescentBenchmark extends BenchmarkBase {
     }
 
     for (batchSize <- batchSizes) {
-      benchmark.addCase(s"de.tuberlin.dima.rddsampling.SampleableRDD gradient descent Sample Size: $batchSize", 3) { _ => gradientDescent(numFeatures, batchSize, 1000, sampleabRDD) }
+      benchmark.addCase(s"SampleableRDD gradient descent Sample Size: $batchSize", 3) { _ => gradientDescent(numFeatures, batchSize, 1000, sampleabRDD) }
     }
 
     benchmark.run()
@@ -93,7 +93,7 @@ object SampleableRDDGradientDescentBenchmark extends BenchmarkBase {
     }
 
     for (numIter <- numIters) {
-      benchmark.addCase(s"de.tuberlin.dima.rddsampling.SampleableRDD gradient descent Iterations: $numIter", 3) { _ => gradientDescent(numFeatures, 0.0001, numIter, sampleabRDD) }
+      benchmark.addCase(s"SampleableRDD gradient descent Iterations: $numIter", 3) { _ => gradientDescent(numFeatures, 0.0001, numIter, sampleabRDD) }
     }
 
     benchmark.run()

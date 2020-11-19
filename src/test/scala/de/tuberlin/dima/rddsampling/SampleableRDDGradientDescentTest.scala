@@ -37,7 +37,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
 
     val sampleableRDD = SampleableRDD(rdd).cache()
 
-    val (weightsRDD, lossRDD) = GradientDescent.runMiniBatchSGD(
+    val (weights, loss) = GradientDescent.runMiniBatchSGD(
       rdd,
       new LogisticGradient,
       new SquaredL2Updater,
@@ -47,7 +47,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
       0.5,
       Vectors.dense(new Array[Double](numFeatures)))
 
-    val (weightsSRDD, lossSRDD) = GradientDescent.runMiniBatchSGD(
+    val (weightsS, lossS) = GradientDescent.runMiniBatchSGD(
       sampleableRDD,
       new LogisticGradient,
       new SquaredL2Updater,
@@ -57,7 +57,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
       0.5,
       Vectors.dense(new Array[Double](numFeatures)))
 
-    assert(weightsRDD.toArray.corresponds(weightsSRDD.toArray) { (a, b) => 1.0-(a/b) <= 0.01})
+    assert(weights.toArray.corresponds(weightsS.toArray) { (a, b) => Math.abs(a-b) <= 0.01})
   }
 
   test("GradientDescentSmallBatch") {
@@ -70,7 +70,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
 
     val sampleableRDD = SampleableRDD(rdd).cache()
 
-    val (weightsRDD, lossRDD) = GradientDescent.runMiniBatchSGD(
+    val (weights, loss) = GradientDescent.runMiniBatchSGD(
       rdd,
       new LogisticGradient,
       new SquaredL2Updater,
@@ -80,7 +80,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
       0.01,
       Vectors.dense(new Array[Double](numFeatures)))
 
-    val (weightsSRDD, lossSRDD) = GradientDescent.runMiniBatchSGD(
+    val (weightsS, lossS) = GradientDescent.runMiniBatchSGD(
       sampleableRDD,
       new LogisticGradient,
       new SquaredL2Updater,
@@ -90,7 +90,7 @@ class SampleableRDDGradientDescentTest extends FunSuite {
       0.01,
       Vectors.dense(new Array[Double](numFeatures)))
 
-    assert(weightsRDD.toArray.corresponds(weightsSRDD.toArray) { (a, b) => 1.0-(a/b) <= 0.01})
+    assert(weights.toArray.corresponds(weightsS.toArray) { (a, b) => Math.abs(a-b) <= 0.01})
   }
 
 

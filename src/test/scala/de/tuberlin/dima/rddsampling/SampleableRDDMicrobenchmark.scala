@@ -100,7 +100,7 @@ object SampleableRDDMicrobenchmark extends BenchmarkBase {
     val sample = SampleableRDD(rdd).cache().sample(withReplacement, fraction, seed)
     sample.count() //this triggers the first execution which also stores data in the caches
 
-    benchmark.addCase(s"de.tuberlin.dima.rddsampling.SampleableRDD withReplace: $withReplacement  frac: $fraction numIt: $numSamples",
+    benchmark.addCase(s"SampleableRDD withReplace: $withReplacement  frac: $fraction numIt: $numSamples",
       5) { _ =>
       for (_ <- 1 to numSamples) {
         sample.count()
